@@ -1,6 +1,6 @@
 //Initialize Phaser Engine. Create a 400x490px game.
 
-var game= new Phase.Game(400,490,Phaser.AUTO, "gameDiv");
+var game= new Phaser.Game(400,490,Phaser.AUTO, "gameDiv");
 
 //Create our 'main' state that will contain the game
 //This is the body of the game itself. It contains all relevant code
@@ -21,8 +21,8 @@ var mainState= {
   },
   
   create: function () {
-    //The create function is called right after the preload f(x)
-    //This is where we'll set up the game assets from scratch
+    //The function is called right after the preload f(x)
+    //This is where we'll set up the game assets from earlier
     
     //Start our Physics Engine
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -51,31 +51,28 @@ var mainState= {
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
     
+    
+    
+    
+     this.score=0;
+    
+    this.labelScore = game.add.text(20,20, "0", {font: "30px Arial", fill: "#ffffff"});
+    
   },
   
   update: function () {
     //This function is called 60 times a second
-    //It contains the games logic and all time related actions 
     
-    if (this.bird.inWorld == false) {
+    //It contains the games logic and all time related actions 
+      if (this.bird.inWorld == false) {
       this.restartGame();
   }
+  
+  game.physics.arcade.overlap(this.bird,this.pipes,this.restartGame, null, this);
+  
   },
   
-  jump:function () {
-    
-    //Let's add the vertical velocity to the bird when the spacebaris pressed down
-    
-    this.bird.body.velocity.y= -350;
-  },
-  
-  restartGame: function() {
-
-    game.state.start('main');
-    
-  },
-  
-  addOnPipe: function (x,y){
+  addOnePipe: function (x,y){
    //Get the first dead pipe
    var pipe = this.pipes.getFirstDead();
    
@@ -98,19 +95,23 @@ var mainState= {
        
       if(i != hole&& i != hole+1){
       
-      
+      this.addOnePipe(400, i*60 + 10);
 
-      //Let's add vertical velocity to the bird when the spacebar is pressed down 
-        
-      this.bird.body.velocity.y = -350 
    } 
+   this.score +=1;
+   this.labelScore.text = this.score;
   },
-      
+       jump:function () {
+    
+    //Let's add the vertical velocity to the bird when the spacebar is pressed down
+    
+    this.bird.body.velocity.y= -350;
+  },
    
    restartGame: function (){
-    game.start.restart
+    game.state.start('main');
    },
-   
+   }
   
   
 //Add and start the gameState
